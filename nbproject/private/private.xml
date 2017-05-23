@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Océane/Desktop/Situation%202/Application/JavaApplication1/src/Bdd.java</file>
-            <file>file:/C:/Users/Océane/Desktop/Situation%202/Application/JavaApplication1/src/Fenetre_Client.java</file>
-            <file>file:/C:/Users/Océane/Desktop/Situation%202/Application/JavaApplication1/src/Fenetre_Commande.java</file>
+            <file>file:/Users/smily/NetBeansProjects/Agrur/src/agrur/Bdd.java</file>
+            <file>file:/Users/smily/NetBeansProjects/Agrur/src/agrur/FenetreClient.java</file>
+            <file>file:/Users/smily/NetBeansProjects/Agrur/src/agrur/Agrur.java</file>
+            <file>file:/Users/smily/NetBeansProjects/Agrur/src/agrur/Lot.java</file>
         </group>
     </open-files>
 </project-private>
