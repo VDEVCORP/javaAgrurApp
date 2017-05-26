@@ -41,7 +41,7 @@ public class Bdd {
             }
         }
         catch (SQLException e){
-            throw new Exception("Impossible de générer la liste des noms des clients"+ e.getMessage());
+            throw new Exception("Impossible de générer la liste des noms des clients: "+ e.getMessage());
         } 
         return lesClients;
     }
@@ -63,7 +63,7 @@ public class Bdd {
             }
         }
         catch (SQLException e){
-            throw new Exception("Impossible de générer la liste des commandes"+ e.getMessage());
+            throw new Exception("Impossible de générer la liste des commandes: "+ e.getMessage());
         }  return lesCommandes;
     }
     
@@ -76,9 +76,19 @@ public class Bdd {
                 lesdetailCommande.add(new DetailCommande(rst.getString("libelleConditionnement") ,rst.getInt("quantiteCommandee")));
             }
         }catch (SQLException e){
-            throw new Exception("Impossible de modifier la commande"+ e.getMessage());
+            throw new Exception("Impossible de modifier la commande: "+ e.getMessage());
         }
          return lesdetailCommande;
+    }
+    
+    public void retireProduit(String nomProduit, int idCommande) throws Exception{
+        try{
+            connexion();
+            this.st = con.createStatement();
+            st.executeUpdate("DELETE FROM detailcommande WHERE detailcommande.idConditionnement IN (SELECT conditionnement.idConditionnement FROM conditionnement WHERE conditionnement.libelleConditionnement ='"+nomProduit+"') AND idCommande ="+idCommande+" ");
+        }catch (SQLException e){
+            throw new Exception("Impossible de retirer le produit : "+ e.getMessage());
+        }   
     }
     
      public ArrayList getListeLibelle() throws Exception{
@@ -90,29 +100,19 @@ public class Bdd {
                 lesConditionnement.add(rst.getString("libelleConditionnement"));
             }
         }catch (SQLException e){
-            throw new Exception("Impossible de modifier la commande"+ e.getMessage());
+            throw new Exception("Impossible de modifier la commande: "+ e.getMessage());
         }
          return lesConditionnement;
     }
     
-    
-    public void modifieCommande(int idCommande) throws Exception {
+  
+    public void supprimeCommande(int numeroCommande) throws Exception {
         try{
             connexion();
             this.st = con.createStatement();
-            //rst = st.executeUpdate("");
-
+            st.executeUpdate("DELETE FROM commande WHERE idCommande = '" + numeroCommande+"'");
         }catch (SQLException e){
-            throw new Exception("Impossible de modifier la commande"+ e.getMessage());
-        }
-    }
-    public void supprimeCommande(String idClient, int numeroCommande) throws Exception {
-        try{
-            connexion();
-            this.st = con.createStatement();
-            rst = st.executeQuery("DELETE FROM commande INNER JOIN client ON client.idClient = commande.idClient WHERE numeroCommande = '" + numeroCommande+"'");
-        }catch (SQLException e){
-            throw new Exception("Impossible de supprimer la commande"+ e.getMessage());
+            throw new Exception("Impossible de supprimer la commande: "+ e.getMessage());
         }        
     }
 
@@ -122,9 +122,21 @@ public class Bdd {
             this.st = con.createStatement();
             st.executeUpdate("UPDATE commande SET commande.idStatus = "+idStatus+" WHERE commande.idCommande = " + idCommande+"");
         }catch (SQLException e){
-            throw new Exception("Impossible de changer le Statut"+ e.getMessage());
+            throw new Exception("Impossible de changer le Statut: "+ e.getMessage());
         }   
     }
     
-    
+     public ArrayList getListeProduit() throws Exception{
+        ArrayList<String> lesConditionnement = new ArrayList();
+         try{
+            st = con.createStatement();
+            rst = st.executeQuery("SELECT libelleConditionnement FROM Conditionnement");
+            while(rst.next()){
+                lesConditionnement.add(rst.getString("libelleConditionnement"));
+            }
+        }catch (SQLException e){
+            throw new Exception("Impossible de modifier la commande: "+ e.getMessage());
+        }
+         return lesConditionnement;
+    }
 }

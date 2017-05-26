@@ -1,12 +1,14 @@
 package agrur;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -14,6 +16,15 @@ import javax.swing.table.DefaultTableModel;
 
 public class FenetreCommande extends javax.swing.JFrame  {
   Bdd laBdd = new Bdd();
+  int unIdCommande;
+
+    public Bdd getLaBdd() {
+        return laBdd;
+    }
+
+    public int getUnIdCommande() {
+        return unIdCommande;
+    }
   
 
     public FenetreCommande(int idCommande) throws Exception {
@@ -21,7 +32,8 @@ public class FenetreCommande extends javax.swing.JFrame  {
         try {
             laBdd.connexion();
             initComponents();
-            remplirTableauDetails(idCommande);
+            unIdCommande = idCommande;
+            remplirTableauDetails(unIdCommande);
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
@@ -37,60 +49,76 @@ public class FenetreCommande extends javax.swing.JFrame  {
         
     private void initComponents() {
         // Initialisation des variables
+        //setDefaultCloseOperation(FenetreClient.);
         java.awt.GridBagConstraints gridBagConstraints;
         getContentPane().setLayout(new java.awt.GridBagLayout());
         getContentPane().setPreferredSize(new Dimension(400, 300)); // Permet de paramètrer les dimension pour plus de lisibilité -> optionnel
         bExporter = new javax.swing.JButton();
-        bExporter.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO:
+        bExporter.addActionListener((ActionEvent e) -> {
+            try {
+                Fichier XML = new Fichier();
+                XML.ouvrir("D:/a/cmd"+unIdCommande+".xml", "W");
+                XML.ecrire("<?xml version=\"1.0\"?>\n");
+                XML.ecrire("<COMMANDE>\n");
+                XML.ecrire("    <NUMERO>"+unIdCommande+"</NUMERO>\n");
+                XML.ecrire("    <PRODUITS>\n");
+                for (DetailCommande unDetailCommande : laBdd.getDetailCommande(unIdCommande)){
+                    XML.ecrire("        <LIGNE>\n");
+                    XML.ecrire("            <LIBELLE>"+unDetailCommande.getLibelleConditionnement()+"</LIBELLE>\n");
+                    XML.ecrire("            <QTE>"+unDetailCommande.getQuantite()+"</QTE>\n");
+                    XML.ecrire("        </LIGNE>\n");
+                }
+                XML.ecrire("    </PRODUITS>\n</COMMANDE>");
+                XML.fermer();
+            } catch (IOException ex) {
+                Logger.getLogger(FenetreCommande.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(FenetreCommande.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         bRetirer = new javax.swing.JButton();
-        bRetirer.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO:
-            }
-        });
-        bSupprimer = new javax.swing.JButton();
-        bSupprimer.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO:
-            }
-        });
-        bAjouter = new javax.swing.JButton();/***
-        bAjouter.addActionListener(new ActionListener(){
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                  try {
-                String[] statut = {"en attente", "en cours", "expedie"};
-                String etat = (String)JOptionPane.showInputDialog(null, "Quel est le statuts ?", "Changement de statut", JOptionPane.QUESTION_MESSAGE, null, statut,statut[0]);
-                String id = tableauCommande.getValueAt(tableauCommande.getSelectedRow(),0).toString();
-                int i = Integer.parseInt(id); 
-                switch (etat)
-                {
-                    case "en attente":
-                        laBdd.changeStatus(i,1);
-                        break;
-                    case "en cours":
-                        laBdd.changeStatus(i,2);
-                        break;
-                    case "expedie":
-                        laBdd.changeStatus(i,3);
-                        break;
-                }
-                JOptionPane.showMessageDialog(null, "Le statut " + etat + " a été Attribuer", "Statut", JOptionPane.INFORMATION_MESSAGE);
-             
+        bRetirer.addActionListener((ActionEvent e) -> {
+            try {
+                String nom = tableauCommande.getValueAt(tableauCommande.getSelectedRow(),0).toString();
+                laBdd.retireProduit(nom,unIdCommande);
+                JOptionPane.showMessageDialog(null, "Le produit"+nom+" à été retiré de votre commande.", "Modification", JOptionPane.INFORMATION_MESSAGE);
+                remplirTableauDetails(unIdCommande);
             }
             catch (Exception ex) {
                 Logger.getLogger(FenetreClient.class.getName()).log(Level.SEVERE, null, ex);
             }
+        });
+        bSupprimer = new javax.swing.JButton();
+        bSupprimer.addActionListener((ActionEvent e) -> {
+                try{
+                    JOptionPane jop = new JOptionPane();    	
+                    int option = jop.showConfirmDialog(null, "Voulez-vous confirmer la suppression ?","Supression", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);                
+                    if(option == JOptionPane.OK_OPTION){
+                        laBdd.supprimeCommande(unIdCommande);
+                    dispose();
+      }
+                }  
+                catch(Exception ex){
+                Logger.getLogger(FenetreClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    
+        });
+        bAjouter = new javax.swing.JButton();
+        bAjouter.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {/**
+            try {
+                
+                String etat = (String)JOptionPane.showInputDialog(null, "Quel est le statuts ?", "Changement de statut", JOptionPane.QUESTION_MESSAGE, null, statut,statut[0]);
+                String id = tableauCommande.getValueAt(tableauCommande.getSelectedRow(),0).toString();
+                int i = Integer.parseInt(id); 
+                JOptionPane.showMessageDialog(null, "Le statut " + etat + " a été Attribuer", "Statut", JOptionPane.INFORMATION_MESSAGE);
+
             }
-        });**/
+            catch (Exception ex) {
+                Logger.getLogger(FenetreClient.class.getName()).log(Level.SEVERE, null, ex);
+            }**/
+          }} );
         jScrollPane1 = new javax.swing.JScrollPane();
         tableauCommande = new javax.swing.JTable();
         tableauCommande.addMouseListener(new TableauListener(){

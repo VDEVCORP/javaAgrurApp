@@ -2,6 +2,7 @@ package agrur;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -13,6 +14,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public  class FenetreClient extends javax.swing.JFrame  {
+
+    
   Bdd laBdd = new Bdd();
   
 
@@ -34,7 +37,6 @@ public  class FenetreClient extends javax.swing.JFrame  {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<String> listeClient;
     private javax.swing.JTable tableauCommande;
-        
     private void initComponents() {
         // Initialisation des variables
         java.awt.GridBagConstraints gridBagConstraints;
@@ -46,18 +48,45 @@ public  class FenetreClient extends javax.swing.JFrame  {
             try {
                 ((DefaultTableModel) tableauCommande.getModel()).setRowCount(0);
                 for (Commande uneCommande : laBdd.getListeCommande(((javax.swing.JComboBox)e.getSource()).getSelectedItem().toString())){
-                    ((DefaultTableModel) tableauCommande.getModel()).addRow(new Object[]{ ""+uneCommande.getIdCommande(),uneCommande.getSoumission().toString(), uneCommande.getStatue()});
+                    
+                    if(laBdd.getDetailCommande(uneCommande.getIdCommande()).size()>0){
+                        ((DefaultTableModel) tableauCommande.getModel()).addRow(new Object[]{ ""+uneCommande.getIdCommande(),uneCommande.getSoumission().toString(), uneCommande.getStatue()});
+                    }
                 }
             } catch (Exception ex) {
                 Logger.getLogger(FenetreClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        
         bExporter = new javax.swing.JButton();
         bExporter.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                //:TODO
-
+                try {
+                    Fichier XML = new Fichier();
+                    XML.ouvrir("D:/a/"+listeClient.getSelectedItem().toString()+".xml", "W");
+                    XML.ecrire("<?xml version=\"1.0\"?>\n");
+                    XML.ecrire("<CLIENT>\n  <NOM>"+listeClient.getSelectedItem().toString()+"</NOM>");
+                    for (Commande uneCommande : laBdd.getListeCommande(listeClient.getSelectedItem().toString())){
+                        
+                        if(laBdd.getDetailCommande(uneCommande.getIdCommande()).size()>0){
+                            XML.ecrire("\n  <COMMANDE>\n      <IDCOMMANDE>"+uneCommande.getIdCommande()+"</IDCOMMANDE>"); 
+                            XML.ecrire("\n      <SOUMISSION>"+uneCommande.getSoumission().toString()+"</SOUMISSION>"); 
+                            XML.ecrire("\n      <STATUS>"+uneCommande.getStatue()+"</STATUS>"); 
+                            XML.ecrire("\n  </COMMANDE>");
+                        }
+                        else{
+                            System.out.println("NOPE 3"+uneCommande.getIdCommande());
+                        }
+               
+                    }
+                    XML.ecrire("\n</CLIENT>");
+                    XML.fermer();
+                } catch (IOException ex) {
+                    Logger.getLogger(FenetreClient.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(FenetreClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             
         });
@@ -137,6 +166,7 @@ public  class FenetreClient extends javax.swing.JFrame  {
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         getContentPane().add(bModifier, gridBagConstraints);
+        
 
         //Tableau de commande
         
@@ -209,12 +239,19 @@ public  class FenetreClient extends javax.swing.JFrame  {
             }
     }
     
-    private void remplirTableau() throws Exception{
+    public void remplirTableau() throws Exception{
         ((DefaultTableModel) tableauCommande.getModel()).setRowCount(0);
             for (Commande uneCommande : laBdd.getListeCommande(listeClient.getSelectedItem().toString())){
-                ((DefaultTableModel) tableauCommande.getModel()).addRow(new Object[]{ ""+uneCommande.getIdCommande(),uneCommande.getSoumission().toString(), uneCommande.getStatue()});
+                if(laBdd.getDetailCommande(uneCommande.getIdCommande()).size()>0){
+                        ((DefaultTableModel) tableauCommande.getModel()).addRow(new Object[]{ ""+uneCommande.getIdCommande(),uneCommande.getSoumission().toString(), uneCommande.getStatue()});
+                    }
+                    else{
+                        System.out.println("NOPE 2"+uneCommande.getIdCommande());
+                    }
+               
             }
     }
+    
 }
 
     
