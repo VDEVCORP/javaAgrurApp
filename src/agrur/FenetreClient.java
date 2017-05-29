@@ -13,12 +13,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ *
+ * @author smily
+ */
 public  class FenetreClient extends javax.swing.JFrame  {
 
     
   Bdd laBdd = new Bdd();
   
-
+    /**
+     *
+     * @throws Exception
+     */
     public FenetreClient() throws Exception {
         
         try {
@@ -214,19 +221,44 @@ public  class FenetreClient extends javax.swing.JFrame  {
                                        
  //---------------------------------------------------------------------------------------------------------------------                
     //Getteur
+
+    /**
+     *
+     * @return
+     */
    
     public JButton getbExporter() {
         return bExporter;
     }
+
+    /**
+     *
+     * @return
+     */
     public JButton getbModifier() {
         return bModifier;
     }
+
+    /**
+     *
+     * @return
+     */
     public JScrollPane getjScrollPane1() {
         return jScrollPane1;
     }
+
+    /**
+     *
+     * @return
+     */
     public JComboBox<String> getListeClient() {
         return listeClient;
     }
+
+    /**
+     *
+     * @return
+     */
     public JTable getTableauCommande() {
         return tableauCommande;
     }
@@ -239,6 +271,10 @@ public  class FenetreClient extends javax.swing.JFrame  {
             }
     }
     
+    /**
+     *
+     * @throws Exception
+     */
     public void remplirTableau() throws Exception{
         ((DefaultTableModel) tableauCommande.getModel()).setRowCount(0);
             for (Commande uneCommande : laBdd.getListeCommande(listeClient.getSelectedItem().toString())){

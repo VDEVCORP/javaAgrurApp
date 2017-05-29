@@ -1,10 +1,12 @@
 package agrur;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.String;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -14,19 +16,35 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ *
+ * @author smily
+ */
 public class FenetreCommande extends javax.swing.JFrame  {
   Bdd laBdd = new Bdd();
   int unIdCommande;
 
+    /**
+     *
+     * @return
+     */
     public Bdd getLaBdd() {
         return laBdd;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getUnIdCommande() {
         return unIdCommande;
     }
   
-
+    /**
+     *
+     * @param idCommande
+     * @throws Exception
+     */
     public FenetreCommande(int idCommande) throws Exception {
         
         try {
@@ -106,18 +124,21 @@ public class FenetreCommande extends javax.swing.JFrame  {
         bAjouter = new javax.swing.JButton();
         bAjouter.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {/**
+            public void actionPerformed(ActionEvent e) {
             try {
-                
-                String etat = (String)JOptionPane.showInputDialog(null, "Quel est le statuts ?", "Changement de statut", JOptionPane.QUESTION_MESSAGE, null, statut,statut[0]);
+                Object listeProduit = new Object();
+                listeProduit=laBdd.getListeProduit().toString();
+                String produit = (String)JOptionPane.showInputDialog(null, "Quel produit ajouter ?", "Ajout", JOptionPane.QUESTION_MESSAGE, null, (Object[]) listeProduit,null);
+                String quantite = (String)JOptionPane.showInputDialog(null, "Combien en voulez vous?", "Quanité", JOptionPane.QUESTION_MESSAGE);
+                laBdd.ajouteProduit(produit,unIdCommande,Integer.parseInt(quantite));
                 String id = tableauCommande.getValueAt(tableauCommande.getSelectedRow(),0).toString();
                 int i = Integer.parseInt(id); 
-                JOptionPane.showMessageDialog(null, "Le statut " + etat + " a été Attribuer", "Statut", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Cela à été ajouté à votre commande", "Confirmation", JOptionPane.INFORMATION_MESSAGE);
 
             }
             catch (Exception ex) {
                 Logger.getLogger(FenetreClient.class.getName()).log(Level.SEVERE, null, ex);
-            }**/
+            }
           }} );
         jScrollPane1 = new javax.swing.JScrollPane();
         tableauCommande = new javax.swing.JTable();
@@ -210,19 +231,44 @@ public class FenetreCommande extends javax.swing.JFrame  {
                                        
  //---------------------------------------------------------------------------------------------------------------------                
     //Getteur
+
+    /**
+     *
+     * @return
+     */
    
     public JButton getbExporter() {
         return bExporter;
     }
+
+    /**
+     *
+     * @return
+     */
     public JButton getbSupprimer() {
         return bSupprimer;
     }
-     public JButton getbAjouter() {
+
+    /**
+     *
+     * @return
+     */
+    public JButton getbAjouter() {
         return bAjouter;
     }
+
+    /**
+     *
+     * @return
+     */
     public JScrollPane getjScrollPane1() {
         return jScrollPane1;
     }
+
+    /**
+     *
+     * @return
+     */
     public JTable getTableauCommande() {
         return tableauCommande;
     }

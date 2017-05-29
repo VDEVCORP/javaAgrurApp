@@ -7,6 +7,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Vector;
 
+/**
+ *
+ * @author smily
+ */
 public class Bdd {
 
     //initialisation des variables
@@ -17,6 +21,10 @@ public class Bdd {
     private Statement st;
     private ResultSet rst;
     
+    /**
+     *
+     * @throws ConnectException
+     */
     public  void connexion() throws ConnectException {
         try{
             Class.forName("com.mysql.jdbc.Driver");
@@ -67,6 +75,12 @@ public class Bdd {
         }  return lesCommandes;
     }
     
+    /**
+     *
+     * @param idCommande
+     * @return
+     * @throws Exception
+     */
     public ArrayList<DetailCommande> getDetailCommande(int idCommande) throws Exception{
         ArrayList<DetailCommande> lesdetailCommande = new ArrayList();
          try{
@@ -81,6 +95,30 @@ public class Bdd {
          return lesdetailCommande;
     }
     
+    /**
+     *
+     * @param nomProduit
+     * @param idCommande
+     * @param quantite
+     * @throws Exception
+     */
+    public void ajouteProduit(String nomProduit, int idCommande, int quantite) throws Exception{
+        try{
+            connexion();
+            this.st = con.createStatement();
+            rst = st.executeQuery("SELECT idConditionnement FROM Conditionnement WHERE libelleConditionnemen='"+nomProduit+"'");
+            st.executeUpdate("INSERT INTO detailCommande VALUES ('"+rst+"','"+idCommande+"','"+quantite+"'");
+        }catch (SQLException e){
+            throw new Exception("Impossible de rajouter le produit : "+ e.getMessage());
+        }   
+    }
+
+    /**
+     *
+     * @param nomProduit
+     * @param idCommande
+     * @throws Exception
+     */
     public void retireProduit(String nomProduit, int idCommande) throws Exception{
         try{
             connexion();
@@ -91,7 +129,12 @@ public class Bdd {
         }   
     }
     
-     public ArrayList getListeLibelle() throws Exception{
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
+    public ArrayList getListeLibelle() throws Exception{
         ArrayList<String> lesConditionnement = new ArrayList();
          try{
             st = con.createStatement();
@@ -105,7 +148,11 @@ public class Bdd {
          return lesConditionnement;
     }
     
-  
+    /**
+     *
+     * @param numeroCommande
+     * @throws Exception
+     */
     public void supprimeCommande(int numeroCommande) throws Exception {
         try{
             connexion();
@@ -116,6 +163,12 @@ public class Bdd {
         }        
     }
 
+    /**
+     *
+     * @param idCommande
+     * @param idStatus
+     * @throws Exception
+     */
     public void changeStatus(int idCommande, int idStatus) throws Exception{
          try{
             connexion();
@@ -126,7 +179,12 @@ public class Bdd {
         }   
     }
     
-     public ArrayList getListeProduit() throws Exception{
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
+    public ArrayList getListeProduit() throws Exception{
         ArrayList<String> lesConditionnement = new ArrayList();
          try{
             st = con.createStatement();

@@ -8,12 +8,21 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ *
+ * @author smily
+ */
 public class Fichier {
     private BufferedWriter fw;
     private BufferedReader fr;
     private char mode;
    
-    
+    /**
+     *
+     * @param nomFic
+     * @param s
+     * @throws IOException
+     */
     public void ouvrir(String nomFic, String s) throws IOException{
         mode=(s.toUpperCase()).charAt(0);
         File f =new File(nomFic);
@@ -25,14 +34,21 @@ public class Fichier {
         }
     }
 
-    
+    /**
+     *
+     * @param chaine
+     * @throws IOException
+     */
     public void ecrire(String chaine) throws IOException{
         if(chaine!=null){
             fw.write(chaine, 0, chaine.length());
         }
     }
 
-    
+    /**
+     *
+     * @throws IOException
+     */
     public void fermer() throws IOException{
         if(mode=='R' || mode =='L'){
             fr.close();
